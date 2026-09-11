@@ -1,21 +1,11 @@
 import QtQuick
-import QtQuick.Effects
 import Quickshell
-import Quickshell.Services.Mpris
 import Quickshell.Wayland
 import Quickshell.Widgets
 
 ShellRoot {
   PanelWindow {
     id: root
-
-    readonly property var activePlayer: {
-      for (var i = 0; i < Mpris.players.values.length; i++) {
-        if (Mpris.players.values[i].isPlaying)
-          return Mpris.players.values[i];
-      }
-      return Mpris.players.values.length > 0 ? Mpris.players.values[0] : null;
-    }
 
     implicitWidth: 120
     WlrLayershell.exclusionMode: ExclusionMode.Ignore
@@ -36,17 +26,16 @@ ShellRoot {
       id: musicRect
 
       property bool expanded: hover.hovered
-      property bool playing: MprisPlaybackState.Playing
 
       color: Colors.secondayColor
       radius: Math.min(height / 2, 8)
       clip: true
-      opacity: root.activePlayer !== null && root.activePlayer.isPlaying ? 1 : 0
-      implicitWidth: expanded ? musicRow.implicitWidth + 300 : musicRow.implicitWidth + 30
-      implicitHeight: expanded ? 130 : 33
-      width: expanded ? musicRow.implicitWidth + 300 : musicRow.implicitWidth + 30
-      height: expanded ? 130 : 33
-      state: root.activePlayer !== null && root.activePlayer.isPlaying ? "shown" : "hidden"
+      opacity: Music.activePlayer !== null && Music.activePlayer.isPlaying ? 1 : 0
+      implicitWidth: expanded ? musicRow.implicitWidth + 280 : musicRow.implicitWidth + 30
+      implicitHeight: expanded ? 170 : 33
+      width: expanded ? musicRow.implicitWidth + 280 : musicRow.implicitWidth + 30
+      height: expanded ? 240 : 33
+      state: Music.activePlayer !== null && Music.activePlayer.isPlaying ? "shown" : "hidden"
 
       Behavior on opacity {
         NumberAnimation {
@@ -74,7 +63,7 @@ ShellRoot {
 
           PropertyChanges {
             target: musicRect
-            width: musicRect.expanded ? musicRow.implicitWidth + 200 : musicRow.implicitWidth + 30
+            width: musicRect.expanded ? musicRow.width + 305 : musicRow.width + 30
             opacity: 1
             visible: true
           }
@@ -138,7 +127,7 @@ ShellRoot {
       Row {
         id: musicRow
 
-        spacing: 6
+        spacing: 8
         opacity: musicRect.expanded ? 0 : 1
 
         anchors {
@@ -154,7 +143,7 @@ ShellRoot {
           Image {
             id: musicImage
 
-            source: root.activePlayer.trackArtUrl ?? ""
+            source: Music.albumArt ?? ""
             fillMode: Image.PreserveAspectCrop
 
             anchors {
@@ -164,7 +153,7 @@ ShellRoot {
         }
 
         Text {
-          text: root.activePlayer ? (root.activePlayer.trackTitle || "Unknown Title") : ""
+          text: Music.activePlayer ? (Music.trackTitle || "Unknown Title") : ""
           font.pixelSize: 14
           font.weight: 600
           font.family: "Inter"
@@ -179,48 +168,7 @@ ShellRoot {
         }
       }
 
-      Column {
-        spacing: 2
-        opacity: musicRect.expanded ? 1 : 0
-
-        Behavior on opacity {
-          NumberAnimation {
-            duration: 200
-            easing.type: Easing.Bezier
-            easing.bezierCurve: [0.34, 0.8, 0.34, 1, 1, 1]
-          }
-        }
-
-        anchors {
-          centerIn: parent
-        }
-
-        Text {
-          text: root.activePlayer.trackArtist
-          font.pixelSize: 18
-          font.weight: 600
-          font.family: "Inter"
-          opacity: musicRect.expanded ? 1 : 0
-          color: Colors.primaryColor
-
-          anchors {
-            horizontalCenter: parent.horizontalCenter
-          }
-        }
-
-        Text {
-          text: root.activePlayer.trackTitle
-          font.pixelSize: 14
-          font.weight: 600
-          font.family: "Inter"
-          opacity: musicRect.expanded ? 1 : 0
-          color: Colors.primaryColor
-
-          anchors {
-            horizontalCenter: parent.horizontalCenter
-          }
-        }
-      }
+      MusicControl {}
     }
   }
 }
