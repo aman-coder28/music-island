@@ -1,128 +1,221 @@
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
-import QtQuick.Shapes
+import QtQuick.Effects
 import Quickshell
-import Quickshell.Io
+import Quickshell.Services.Mpris
 import Quickshell.Wayland
+import Quickshell.Widgets
 
-PanelWindow {
-  id: root
+ShellRoot {
+  PanelWindow {
+    id: root
 
-  implicitWidth: 80
-  WlrLayershell.exclusionMode: ExclusionMode.Ignore
-  color: "transparent"
-
-  mask: Region {
-    item: clockRect
-  }
-
-  anchors {
-    top: true
-    left: true
-    right: true
-    bottom: true
-  }
-
-  Rectangle {
-    id: clockRect
-
-    property bool expanded: hover.hovered
-
-    color: Colors.secondayColor
-    radius: Math.min(height / 2, 12)
-    clip: true
-    implicitWidth: expanded ? 230 : 90
-    implicitHeight: expanded ? 120 : 34
-
-    Behavior on implicitWidth {
-      NumberAnimation {
-        duration: 300
-        easing.type: Easing.Bezier
-        easing.bezierCurve: [0.34, 0.8, 0.34, 1, 1, 1]
+    readonly property var activePlayer: {
+      for (var i = 0; i < Mpris.players.values.length; i++) {
+        if (Mpris.players.values[i].isPlaying)
+          return Mpris.players.values[i];
       }
-    }
-    Behavior on implicitHeight {
-      NumberAnimation {
-        duration: 300
-        easing.type: Easing.Bezier
-        easing.bezierCurve: [0.34, 0.8, 0.34, 1, 1, 1]
-      }
+      return Mpris.players.values.length > 0 ? Mpris.players.values[0] : null;
     }
 
-    HoverHandler {
-      id: hover
+    implicitWidth: 120
+    WlrLayershell.exclusionMode: ExclusionMode.Ignore
+    color: "transparent"
+
+    mask: Region {
+      item: musicRect
     }
 
     anchors {
-      top: parent.top
-      horizontalCenter: parent.horizontalCenter
-      topMargin: 4
+      top: true
+      left: true
+      right: true
+      bottom: true
     }
 
-    SystemClock {
-      id: clock
+    Rectangle {
+      id: musicRect
 
-      precision: SystemClock.Minutes
-    }
+      property bool expanded: hover.hovered
+      property bool playing: MprisPlaybackState.Playing
 
-    Text {
-      text: Qt.formatTime(clock.date, "h:mm A")
-      font.pixelSize: 13
-      font.weight: 600
-      opacity: clockRect.expanded ? 0 : 1
-      color: Colors.accentColor
-
-      Behavior on opacity {
-        NumberAnimation {
-          duration: 120
-        }
-      }
-
-      anchors {
-        centerIn: parent
-        horizontalCenter: parent.horizontalCenter
-      }
-    }
-
-    Column {
-      spacing: 2
-      opacity: clockRect.expanded ? 1 : 0
+      color: Colors.secondayColor
+      radius: Math.min(height / 2, 12)
+      clip: true
+      opacity: root.activePlayer !== null && root.activePlayer.isPlaying ? 1 : 0
+      implicitWidth: expanded ? musicRow.implicitWidth + 300 : musicRow.implicitWidth + 30
+      implicitHeight: expanded ? 130 : 33
+      state: root.activePlayer !== null && root.activePlayer.isPlaying ? "shown" : "hidden"
 
       Behavior on opacity {
         NumberAnimation {
           duration: 200
+          easing.type: Easing.InOutElastic
+        }
+      }
+      Behavior on implicitWidth {
+        NumberAnimation {
+          duration: 300
           easing.type: Easing.Bezier
           easing.bezierCurve: [0.34, 0.8, 0.34, 1, 1, 1]
         }
       }
+      Behavior on implicitHeight {
+        NumberAnimation {
+          duration: 300
+          easing.type: Easing.Bezier
+          easing.bezierCurve: [0.34, 0.8, 0.34, 1, 1, 1]
+        }
+      }
+      states: [
+        State {
+          name: "shown"
 
-      anchors {
-        centerIn: parent
-        horizontalCenter: parent.horizontalCenter
+          PropertyChanges {
+            target: musicRect
+            opacity: 1
+            visible: true
+          }
+        },
+        State {
+          name: "hidden"
+
+          PropertyChanges {
+            target: musicRect
+            width: 0
+            opacity: 0
+            visible: false
+          }
+        }
+      ]
+      transitions: [
+        Transition {
+          from: "shown"
+          to: "hidden"
+
+          SequentialAnimation {
+            NumberAnimation {
+              properties: "width,opacity"
+              duration: 250
+              easing.type: Easing.InCubic
+            }
+
+            PropertyAction {
+              property: "visible"
+            }
+          }
+        },
+        Transition {
+          from: "hidden"
+          to: "shown"
+
+          SequentialAnimation {
+            PropertyAction {
+              property: "visible"
+            }
+
+            NumberAnimation {
+              properties: "width,opacity"
+              duration: 250
+              easing.type: Easing.OutCubic
+            }
+          }
+        }
+      ]
+
+      HoverHandler {
+        id: hover
       }
 
-      Text {
-        text: Qt.formatTime(clock.date, "h:mm A")
-        font.pixelSize: 22
-        font.weight: 600
-        opacity: clockRect.expanded ? 1 : 0
-        color: Colors.primaryColor
+      anchors {
+        top: parent.top
+        horizontalCenter: parent.horizontalCenter
+        topMargin: 4
+      }
+
+      Row {
+        id: musicRow
+
+        spacing: 6
+        opacity: musicRect.expanded ? 0 : 1
 
         anchors {
-          horizontalCenter: parent.horizontalCenter
+          centerIn: parent
+        }
+
+        ClippingRectangle {
+          width: 20
+          height: 20
+          radius: 180
+          opacity: musicRect.expanded ? 0 : 1
+
+          Image {
+            id: musicImage
+
+            source: root.activePlayer.trackArtUrl ?? ""
+            fillMode: Image.PreserveAspectCrop
+
+            anchors {
+              fill: parent
+            }
+          }
+        }
+
+        Text {
+          text: root.activePlayer ? (root.activePlayer.trackTitle || "Unknown Title") : ""
+          font.pixelSize: 14
+          font.weight: 600
+          font.family: "Inter"
+          opacity: musicRect.expanded ? 0 : 1
+          color: Colors.accentColor
+
+          Behavior on opacity {
+            NumberAnimation {
+              duration: 150
+            }
+          }
         }
       }
 
-      Text {
-        text: Qt.formatDate(clock.date, "ddd, MMM d, yyyy")
-        font.pixelSize: 14
-        font.weight: 600
-        opacity: clockRect.expanded ? 1 : 0
-        color: Colors.primaryColor
+      Column {
+        spacing: 2
+        opacity: musicRect.expanded ? 1 : 0
+
+        Behavior on opacity {
+          NumberAnimation {
+            duration: 200
+            easing.type: Easing.Bezier
+            easing.bezierCurve: [0.34, 0.8, 0.34, 1, 1, 1]
+          }
+        }
 
         anchors {
-          horizontalCenter: parent.horizontalCenter
+          centerIn: parent
+        }
+
+        Text {
+          text: root.activePlayer.trackArtist
+          font.pixelSize: 18
+          font.weight: 600
+          font.family: "Inter"
+          opacity: musicRect.expanded ? 1 : 0
+          color: Colors.primaryColor
+
+          anchors {
+            horizontalCenter: parent.horizontalCenter
+          }
+        }
+
+        Text {
+          text: root.activePlayer.trackTitle
+          font.pixelSize: 14
+          font.weight: 600
+          font.family: "Inter"
+          opacity: musicRect.expanded ? 1 : 0
+          color: Colors.primaryColor
+
+          anchors {
+            horizontalCenter: parent.horizontalCenter
+          }
         }
       }
     }
