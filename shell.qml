@@ -21,6 +21,7 @@ PanelWindow {
     top: true
     left: true
     right: true
+    bottom: true
   }
 
   Rectangle {
@@ -31,8 +32,8 @@ PanelWindow {
     color: Colors.secondayColor
     radius: Math.min(height / 2, 12)
     clip: true
-    implicitWidth: expanded ? 200 : 90
-    implicitHeight: expanded ? 100 : 34
+    implicitWidth: expanded ? 230 : 90
+    implicitHeight: expanded ? 120 : 34
 
     Behavior on implicitWidth {
       NumberAnimation {
@@ -66,7 +67,7 @@ PanelWindow {
     }
 
     Text {
-      text: Qt.formatTime(clock.date, "h:m A")
+      text: Qt.formatTime(clock.date, "h:mm A")
       font.pixelSize: 13
       font.weight: 600
       opacity: clockRect.expanded ? 0 : 1
@@ -80,11 +81,12 @@ PanelWindow {
 
       anchors {
         centerIn: parent
+        horizontalCenter: parent.horizontalCenter
       }
     }
 
     Column {
-      spacing: 4
+      spacing: 2
       opacity: clockRect.expanded ? 1 : 0
 
       Behavior on opacity {
@@ -97,10 +99,11 @@ PanelWindow {
 
       anchors {
         centerIn: parent
+        horizontalCenter: parent.horizontalCenter
       }
 
       Text {
-        text: Qt.formatTime(clock.date, "h:m A")
+        text: Qt.formatTime(clock.date, "h:mm A")
         font.pixelSize: 22
         font.weight: 600
         opacity: clockRect.expanded ? 1 : 0
