@@ -3,6 +3,14 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 Column {
+  function formatTime(totalSeconds) {
+    var total = Math.max(0, Math.floor(totalSeconds));
+    var minutes = Math.floor(total / 60);
+    var seconds = total % 60;
+
+    return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+  }
+
   anchors {
     fill: parent
     margins: 25
@@ -88,17 +96,22 @@ Column {
 
   RowLayout {
     opacity: musicRect.expanded ? 1 : 0
-    spacing: 2
+    spacing: 10
+
+    Behavior on opacity {
+      NumberAnimation {
+        duration: 300
+        easing.type: Easing.InBounce
+      }
+    }
 
     anchors {
-      leftMargin: 10
-      rightMargin: 10
       fill: parent
-      topMargin: 145
+      topMargin: 135
     }
 
     Text {
-      text: "0" + Qt.locale().toString(Music.position / 60).substring(0, 1) + ":" + Qt.locale().toString(Music.position / 60).substring(2, 4)
+      text: formatTime(Music.position)
       font.pixelSize: 13
       color: "white"
       font.weight: 600
@@ -106,8 +119,8 @@ Column {
     }
 
     Item {
-      width: 200
-      height: 10
+      Layout.fillWidth: true
+      implicitHeight: 10
 
       Rectangle {
         id: rect1
@@ -120,27 +133,30 @@ Column {
 
           value: Music.position
           from: 0
-          to: Music.length
+          to: Music.length > 0 ? Music.length : 1
 
           background: Rectangle {
-            implicitWidth: 200
             implicitHeight: 10
             color: Colors.bgColor
             radius: 5
           }
           contentItem: Rectangle {
             implicitWidth: 200
-            width: pBar.visualPosition * parent.width
+            width: pBar.visualPosition * pBar.width
             implicitHeight: 10
             color: Colors.secondaryColor
             radius: 5
+          }
+
+          anchors {
+            fill: parent
           }
         }
       }
     }
 
     Text {
-      text: "0" + Qt.locale().toString(Music.length / 60).substring(0, 1) + ":" + Qt.locale().toString(Music.length / 60).substring(2, 4)
+      text: formatTime(Music.length)
       font.pixelSize: 13
       font.weight: 600
       font.family: "JetBrains Mono"

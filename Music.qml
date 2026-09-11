@@ -17,8 +17,8 @@ Singleton {
   property string trackTitle: Music.activePlayer.trackTitle ?? ""
   property string albumArt: Music.activePlayer.trackArtUrl ?? ""
   property string trackArtist: Music.activePlayer.trackArtist ?? ""
-  property real position: activePlayer.position
-  property real length: activePlayer.length
+  property real position: activePlayer ? activePlayer.position : 0
+  property real length: activePlayer ? activePlayer.length : 0
 
   Timer {
     running: Music.activePlayer.playbackState == MprisPlaybackState.Playing
