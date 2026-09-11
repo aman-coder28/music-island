@@ -9,55 +9,118 @@ import Quickshell.Wayland
 PanelWindow {
   id: root
 
-  implicitHeight: 33
   implicitWidth: 80
-  width: 80
-  height: 33
-  WlrLayershell.layer: WlrLayer.Overlay
   WlrLayershell.exclusionMode: ExclusionMode.Ignore
   color: "transparent"
 
-  anchors {
-    top: true
+  mask: Region {
+    item: clockRect
   }
 
-  margins {
-    top: 4
+  anchors {
+    top: true
+    left: true
+    right: true
   }
 
   Rectangle {
     id: clockRect
 
+    property bool expanded: hover.hovered
+
     color: Colors.secondayColor
-    radius: 8
-    width: parent.width
-    height: parent.height
-    clip: false
+    radius: Math.min(height / 2, 12)
+    clip: true
+    implicitWidth: expanded ? 200 : 90
+    implicitHeight: expanded ? 100 : 34
+
+    Behavior on implicitWidth {
+      NumberAnimation {
+        duration: 300
+        easing.type: Easing.Bezier
+        easing.bezierCurve: [0.34, 0.8, 0.34, 1, 1, 1]
+      }
+    }
+    Behavior on implicitHeight {
+      NumberAnimation {
+        duration: 300
+        easing.type: Easing.Bezier
+        easing.bezierCurve: [0.34, 0.8, 0.34, 1, 1, 1]
+      }
+    }
+
+    HoverHandler {
+      id: hover
+    }
 
     anchors {
-      centerIn: parent
-      fill: parent
+      top: parent.top
+      horizontalCenter: parent.horizontalCenter
+      topMargin: 4
+    }
+
+    SystemClock {
+      id: clock
+
+      precision: SystemClock.Minutes
     }
 
     Text {
-      anchors.centerIn: parent
-      text: Qt.formatTime(new Date(), "h:m A")
+      text: Qt.formatTime(clock.date, "h:m A")
       font.pixelSize: 13
-      font.weight: 500
+      font.weight: 600
+      opacity: clockRect.expanded ? 0 : 1
       color: Colors.accentColor
+
+      Behavior on opacity {
+        NumberAnimation {
+          duration: 120
+        }
+      }
+
+      anchors {
+        centerIn: parent
+      }
     }
 
-    MouseArea {
-      anchors.fill: parent
-      hoverEnabled: true
+    Column {
+      spacing: 4
+      opacity: clockRect.expanded ? 1 : 0
 
-      onEntered: {
-        root.implicitWidth = 250;
-        root.implicitHeight = 120;
+      Behavior on opacity {
+        NumberAnimation {
+          duration: 200
+          easing.type: Easing.Bezier
+          easing.bezierCurve: [0.34, 0.8, 0.34, 1, 1, 1]
+        }
       }
-      onExited: {
-        root.implicitWidth = 75;
-        root.implicitHeight = 33;
+
+      anchors {
+        centerIn: parent
+      }
+
+      Text {
+        text: Qt.formatTime(clock.date, "h:m A")
+        font.pixelSize: 22
+        font.weight: 600
+        opacity: clockRect.expanded ? 1 : 0
+        color: Colors.primaryColor
+
+        anchors {
+          horizontalCenter: parent.horizontalCenter
+        }
+      }
+
+      Text {
+        text: Qt.formatDate(clock.date, "ddd, MMM d, yyyy")
+        font.pixelSize: 14
+        font.weight: 600
+        opacity: clockRect.expanded ? 1 : 0
+        color: Colors.primaryColor
+
+        anchors {
+          horizontalCenter: parent.horizontalCenter
+        }
       }
     }
   }
