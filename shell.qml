@@ -72,6 +72,7 @@ ShellRoot {
 
           PropertyChanges {
             target: musicRect
+            width: musicRect.expanded ? musicRow.implicitWidth + 300 : musicRow.implicitWidth + 30
             opacity: 1
             visible: true
           }
