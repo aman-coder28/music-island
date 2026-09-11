@@ -39,7 +39,7 @@ ShellRoot {
       property bool playing: MprisPlaybackState.Playing
 
       color: Colors.secondayColor
-      radius: Math.min(height / 2, 12)
+      radius: Math.min(height / 2, 8)
       clip: true
       opacity: root.activePlayer !== null && root.activePlayer.isPlaying ? 1 : 0
       implicitWidth: expanded ? musicRow.implicitWidth + 300 : musicRow.implicitWidth + 30
@@ -73,8 +73,8 @@ ShellRoot {
           name: "shown"
 
           PropertyChanges {
-            target: root
-            width: musicRow.implicitWidth + 300
+            target: musicRect
+            width: musicRect.expanded ? musicRow.implicitWidth + 200 : musicRow.implicitWidth + 30
             opacity: 1
             visible: true
           }
