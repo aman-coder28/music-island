@@ -44,6 +44,8 @@ ShellRoot {
       opacity: root.activePlayer !== null && root.activePlayer.isPlaying ? 1 : 0
       implicitWidth: expanded ? musicRow.implicitWidth + 300 : musicRow.implicitWidth + 30
       implicitHeight: expanded ? 130 : 33
+      width: expanded ? musicRow.implicitWidth + 300 : musicRow.implicitWidth + 30
+      height: expanded ? 130 : 33
       state: root.activePlayer !== null && root.activePlayer.isPlaying ? "shown" : "hidden"
 
       Behavior on opacity {
@@ -52,14 +54,14 @@ ShellRoot {
           easing.type: Easing.InOutElastic
         }
       }
-      Behavior on implicitWidth {
+      Behavior on width {
         NumberAnimation {
           duration: 300
           easing.type: Easing.Bezier
           easing.bezierCurve: [0.34, 0.8, 0.34, 1, 1, 1]
         }
       }
-      Behavior on implicitHeight {
+      Behavior on height {
         NumberAnimation {
           duration: 300
           easing.type: Easing.Bezier
@@ -71,7 +73,8 @@ ShellRoot {
           name: "shown"
 
           PropertyChanges {
-            target: musicRect
+            target: root
+            width: musicRow.implicitWidth + 300
             opacity: 1
             visible: true
           }
