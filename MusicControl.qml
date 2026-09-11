@@ -114,7 +114,7 @@ Column {
       text: formatTime(Music.position)
       font.pixelSize: 13
       color: "white"
-      font.weight: 600
+      font.weight: 400
       font.family: "JetBrains Mono"
     }
 
@@ -131,10 +131,16 @@ Column {
         ProgressBar {
           id: pBar
 
-          value: Music.position
+          to: 1
+          value: Music.length > 0 ? Music.position / Music.length : 0
           from: 0
-          to: Music.length > 0 ? Music.length : 1
 
+          Behavior on value {
+            NumberAnimation {
+              duration: 200
+              easing.type: Easing.InBounce
+            }
+          }
           background: Rectangle {
             implicitHeight: 10
             color: Colors.bgColor
@@ -158,7 +164,7 @@ Column {
     Text {
       text: formatTime(Music.length)
       font.pixelSize: 13
-      font.weight: 600
+      font.weight: 400
       font.family: "JetBrains Mono"
       color: "white"
     }

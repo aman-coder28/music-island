@@ -8,21 +8,17 @@ Singleton {
   property bool paused: MprisPlaybackState.Paused
   property bool stopped: MprisPlaybackState.Stopped
   readonly property var activePlayer: {
-    for (var i = 0; i < Mpris.players.values.length; i++) {
-      if (Mpris.players.values[i].isPlaying)
-        return Mpris.players.values[i];
-    }
     return Mpris.players.values.length > 0 ? Mpris.players.values[0] : null;
   }
   property string trackTitle: Music.activePlayer.trackTitle ?? ""
   property string albumArt: Music.activePlayer.trackArtUrl ?? ""
   property string trackArtist: Music.activePlayer.trackArtist ?? ""
-  property real position: activePlayer ? activePlayer.position : 0
-  property real length: activePlayer ? activePlayer.length : 0
+  property real position: activePlayer.position
+  property real length: activePlayer.length
 
   Timer {
     running: Music.activePlayer.playbackState == MprisPlaybackState.Playing
-    interval: 1000
+    interval: 150
     repeat: true
 
     onTriggered: {
