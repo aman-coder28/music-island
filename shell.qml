@@ -28,13 +28,13 @@ ShellRoot {
       property bool expanded: hover.hovered
 
       color: Colors.on_secondary
-      radius: Math.min(height / 2, 8)
+      radius: Math.min(height / 2, 10)
       clip: true
       opacity: Music.activePlayer !== null && Music.activePlayer.isPlaying ? 1 : 0
-      implicitWidth: expanded ? musicRow.implicitWidth + 250 : musicRow.implicitWidth + 30
-      implicitHeight: expanded ? musicRow.implicitHeight + 150 : 30
-      width: expanded ? musicRow.implicitWidth + 250 : musicRow.implicitWidth + 30
-      height: expanded ? musicRow.implicitHeight + 190 : 30
+      implicitWidth: expanded ? musicRow.implicitWidth + 240 : musicRow.implicitWidth + 30
+      implicitHeight: expanded ? musicRow.implicitHeight + 155 : 30
+      width: expanded ? musicRow.implicitWidth + 240 : musicRow.implicitWidth + 30
+      height: expanded ? musicRow.implicitHeight + 155 : 30
       state: Music.activePlayer !== null && Music.activePlayer.isPlaying ? "shown" : "hidden"
 
       Behavior on opacity {
@@ -63,7 +63,7 @@ ShellRoot {
 
           PropertyChanges {
             target: musicRect
-            width: musicRect.expanded ? musicRow.width + 200 : musicRow.width + 30
+            width: musicRect.expanded ? musicRow.width + 250 : musicRow.width + 30
             opacity: 1
             visible: true
           }

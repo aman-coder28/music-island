@@ -5,17 +5,30 @@ import QtQuick.Layouts
 import Quickshell.Services.Mpris
 import Quickshell.Widgets
 
-Column {
-  spacing: 18
+ColumnLayout {
+  id: controls
+
+  property bool expanded: parent.expanded
+
+  spacing: 10
 
   anchors {
     fill: parent
-    margins: 20
+    margins: 15
   }
 
   Row {
-    opacity: musicRect.expanded ? 1 : 0
-    spacing: 25
+    Layout.alignment: Qt.AlignLeft
+    spacing: 20
+    opacity: controls.expanded ? 1 : 0
+
+    Behavior on opacity {
+      NumberAnimation {
+        duration: 200
+        easing.type: Easing.Bezier
+        easing.bezierCurve: [0.34, 0.8, 0.34, 1, 1, 1]
+      }
+    }
 
     ClippingRectangle {
       width: 70
@@ -36,30 +49,17 @@ Column {
     }
 
     Column {
-      id: track
-
       spacing: 10
-      opacity: musicRect.expanded ? 1 : 0
-      topPadding: 8
-
-      Behavior on opacity {
-        NumberAnimation {
-          duration: 200
-          easing.type: Easing.Bezier
-          easing.bezierCurve: [0.34, 0.8, 0.34, 1, 1, 1]
-        }
-      }
+      topPadding: 7
 
       Column {
-        spacing: 4
+        spacing: 5
 
         Text {
           text: Music.trackTitle
           font.pixelSize: 15
           font.weight: 500
           font.family: "Inter"
-          font.letterSpacing: 0.5
-          opacity: musicRect.expanded ? 1 : 0
           color: Colors.secondary
         }
 
@@ -68,28 +68,33 @@ Column {
           font.pixelSize: 14
           font.weight: 400
           font.family: "Inter"
-          font.letterSpacing: 0.5
-          opacity: musicRect.expanded ? 1 : 0
           color: Colors.secondary
         }
       }
     }
   }
 
-  Column {
-    opacity: musicRect.expanded ? 1 : 0
+  RowLayout {
+    Layout.fillWidth: true
     spacing: 10
 
     anchors {
       fill: parent
-      topMargin: 10
+      margins: 4
+      topMargin: 35
     }
 
-    Rectangle {
-      id: rect1
+    Text {
+      text: Music.formatTime(pBar.pressed ? pBar.value : Music.position)
+      font.pixelSize: 12
+      color: "white"
+      font.weight: 400
+      font.family: "Inter"
+    }
 
-      anchors.fill: parent
-      color: "transparent"
+    Item {
+      Layout.fillWidth: true
+      Layout.preferredHeight: 12
 
       Slider {
         id: pBar
@@ -102,7 +107,7 @@ Column {
           x: pBar.leftPadding
           y: pBar.topPadding + pBar.availableHeight / 2 - height / 2
           width: pBar.availableWidth
-          height: 10
+          height: 7
           radius: height / 2
           color: Colors.surface_variant
 
@@ -116,8 +121,8 @@ Column {
         handle: Item {
           x: pBar.leftPadding + pBar.visualPosition * (pBar.availableWidth - width)
           y: pBar.topPadding + pBar.availableHeight / 2 - height / 2
-          width: 17
-          height: 17
+          width: 14
+          height: 14
 
           RectangularShadow {
             anchors.fill: parent
@@ -149,52 +154,30 @@ Column {
       }
     }
 
-    Column {
-      anchors.fill: parent
-
-      RowLayout {
-        Layout.fillWidth: parent
-
-        Text {
-          text: Music.formatTime(pBar.pressed ? pBar.value : Music.position)
-          font.pixelSize: 13
-          color: "white"
-          font.weight: 400
-          font.family: "Inter"
-          font.letterSpacing: 1
-        }
-
-        Item {}
-
-        Text {
-          text: Music.formatTime(Music.length)
-          font.pixelSize: 13
-          font.weight: 400
-          font.family: "Inter"
-          font.letterSpacing: 1
-          color: "white"
-        }
-      }
+    Text {
+      text: Music.formatTime(Music.length)
+      font.pixelSize: 12
+      font.weight: 400
+      font.family: "Inter"
+      color: "white"
     }
   }
 
   RowLayout {
-    Layout.alignment: Qt.AlignBottom
-    Layout.fillWidth: parent.width
-    Layout.fillHeight: parent.height
-    spacing: 20
+    Layout.alignment: Qt.AlignCenter
+    layoutDirection: Qt.LeftToRight
+    spacing: 30
 
     Rectangle {
-      Layout.preferredWidth: 20
-      Layout.preferredHeight: 20
-      Layout.alignment: Qt.AlignHCenter
-      radius: 8
+      Layout.preferredWidth: 19
+      Layout.preferredHeight: 19
+      Layout.alignment: Qt.AlignVCenter
       color: Music.activePlayer && Music.activePlayer.loopState !== MprisLoopState.None ? Colors.secondary_container : "transparent"
 
       Image {
         source: "assets/repeat.svg"
-        width: 20
-        height: 20
+        width: 19
+        height: 19
         anchors.fill: parent
       }
 
@@ -210,7 +193,6 @@ Column {
       Layout.preferredWidth: 24
       Layout.preferredHeight: 24
       Layout.alignment: Qt.AlignVCenter
-      radius: 8
       color: "transparent"
 
       Image {
@@ -236,7 +218,7 @@ Column {
 
       Layout.preferredWidth: 42
       Layout.preferredHeight: 42
-      Layout.alignment: Qt.AlignCenter
+      Layout.alignment: Qt.AlignVCenter
       radius: 11
       color: Colors.secondary_container
 
