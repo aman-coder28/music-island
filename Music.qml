@@ -7,8 +7,15 @@ Singleton {
   property bool playing: MprisPlaybackState.Playing
   property bool paused: MprisPlaybackState.Paused
   property bool stopped: MprisPlaybackState.Stopped
-  property var activePlayer: {
-    return Mpris.players.values.length > 0 ? Mpris.players.values[0] : null;
+  readonly property var activePlayer: {
+    const players = Mpris.players.values;
+
+    for (let i = 0; i < players.length; ++i) {
+      if (players[i].isPlaying)
+        return players[i];
+    }
+
+    return players.length > 0 ? players[0] : null;
   }
   property string trackTitle: Music.activePlayer.trackTitle ?? ""
   property string albumArt: Music.activePlayer.trackArtUrl ?? ""
@@ -16,13 +23,31 @@ Singleton {
   property real position: activePlayer.position
   property real length: activePlayer.length
 
-  Timer {
-    running: Music.activePlayer.playbackState == MprisPlaybackState.Playing
-    interval: 150
-    repeat: true
+  function formatTime(seconds) {
+    if (!isFinite(seconds) || seconds < 0)
+      seconds = 0;
 
-    onTriggered: {
-      Music.activePlayer.positionChanged();
-    }
+    const total = Math.floor(seconds);
+    const mins = Math.floor(total / 60);
+    const secs = total % 60;
+    return mins + ":" + (secs < 10 ? "0" + secs : secs);
+  }
+
+  function seekTo(fraction) {
+    if (!activePlayer)
+      return;
+
+    const player = activePlayer;
+
+    if (!player.canSeek || !player.positionSupported || !(player.length > 0))
+      return;
+
+    player.seek(Math.max(0, Math.min(1, fraction)) * player.length);
+  }
+
+  FrameAnimation {
+    running: Music.activePlayer.playbackState == MprisPlaybackState.Playing
+
+    onTriggered: Music.activePlayer.positionChanged()
   }
 }

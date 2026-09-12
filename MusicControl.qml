@@ -5,14 +5,6 @@ import QtQuick.Layouts
 import Quickshell.Widgets
 
 Column {
-  function formatTime(totalSeconds) {
-    var total = Math.max(0, Math.floor(totalSeconds));
-    var minutes = Math.floor(total / 60);
-    var seconds = total % 60;
-
-    return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
-  }
-
   anchors {
     fill: parent
     margins: 25
@@ -114,7 +106,7 @@ Column {
     }
 
     Text {
-      text: formatTime(Music.position)
+      text: Music.formatTime(Music.position)
       font.pixelSize: 13
       color: "white"
       font.weight: 400
@@ -137,7 +129,6 @@ Column {
           anchors.fill: parent
           from: 0
           to: Music.length > 0 ? Music.length : 1
-          value: Music.length > 0 ? Music.position / Music.length : 1
 
           background: Rectangle {
             x: pBar.leftPadding
@@ -176,13 +167,12 @@ Column {
           }
 
           onPressedChanged: {
-            if (!pressed && Music.activePlayer && Music.activePlayer.canSeek) {
-              Music.activePlayer.position = pBar.value;
+            if (pressed) {
+              Music.seekTo(value - Music.length);
             }
-
-            if (pressed && Music.activePlayer && Music.activePlayer.canSeek) {
-              Music.activePlayer.seek(value * Music.length);
-            }
+          }
+          onMoved: {
+            Music.position = value;
           }
 
           Binding {
@@ -196,7 +186,7 @@ Column {
     }
 
     Text {
-      text: formatTime(Music.length)
+      text: Music.formatTime(Music.length)
       font.pixelSize: 13
       font.weight: 400
       font.family: "JetBrains Mono"
