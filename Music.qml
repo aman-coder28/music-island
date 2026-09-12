@@ -44,7 +44,10 @@ Singleton {
 
     const target = Math.max(0, Math.min(seconds, player.length));
 
-    player.seek(target - player.position);
+    if (player.positionSupported)
+      player.position = target;
+    else
+      player.seek(target - player.position);
   }
 
   function cycleLoop() {

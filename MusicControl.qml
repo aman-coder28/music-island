@@ -171,9 +171,6 @@ Column {
               Music.seekTo(value);
             }
           }
-          onMoved: {
-            Music.position = value;
-          }
 
           Binding {
             target: pBar
