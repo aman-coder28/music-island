@@ -33,16 +33,21 @@ Singleton {
     return mins + ":" + (secs < 10 ? "0" + secs : secs);
   }
 
-  function seekTo(fraction) {
+  function seekTo(seconds) {
     if (!activePlayer)
       return;
 
     const player = activePlayer;
 
-    if (!player.canSeek || !player.positionSupported || !(player.length > 0))
+    if (!player.canSeek || !(player.length > 0))
       return;
 
-    player.seek(Math.max(0, Math.min(1, fraction)) * player.length);
+    const target = Math.max(0, Math.min(seconds, player.length));
+
+    if (player.positionSupported)
+      player.position = target;
+    else
+      player.seek(target - player.position);
   }
 
   FrameAnimation {

@@ -89,28 +89,20 @@ Column {
     }
   }
 
-  RowLayout {
+  ColumnLayout {
     opacity: musicRect.expanded ? 1 : 0
     spacing: 10
 
     Behavior on opacity {
       NumberAnimation {
         duration: 300
-        easing.type: Easing.InBounce
+        easing.type: Easing.Linear
       }
     }
 
     anchors {
       fill: parent
       topMargin: 135
-    }
-
-    Text {
-      text: Music.formatTime(Music.position)
-      font.pixelSize: 13
-      color: "white"
-      font.weight: 400
-      font.family: "JetBrains Mono"
     }
 
     Item {
@@ -167,12 +159,9 @@ Column {
           }
 
           onPressedChanged: {
-            if (pressed) {
-              Music.seekTo(value - Music.length);
+            if (!pressed) {
+              Music.seekTo(value);
             }
-          }
-          onMoved: {
-            Music.position = value;
           }
 
           Binding {
@@ -185,12 +174,33 @@ Column {
       }
     }
 
-    Text {
-      text: Music.formatTime(Music.length)
-      font.pixelSize: 13
-      font.weight: 400
-      font.family: "JetBrains Mono"
-      color: "white"
+    RowLayout {
+      anchors {
+        fill: parent
+        topMargin: 8
+      }
+
+      Text {
+        text: Music.formatTime(pBar.pressed ? pBar.value : Music.position)
+        font.pixelSize: 13
+        color: "white"
+        font.weight: 400
+        font.family: "JetBrains Mono"
+        Layout.alignment: Qt.AlignLeft
+      }
+
+      Item {
+        Layout.fillWidth: true
+      }
+
+      Text {
+        text: Music.formatTime(Music.length)
+        font.pixelSize: 13
+        font.weight: 400
+        font.family: "JetBrains Mono"
+        color: "white"
+        Layout.alignment: Qt.AlignRight
+      }
     }
   }
 }
