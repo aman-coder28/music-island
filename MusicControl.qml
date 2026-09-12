@@ -6,9 +6,11 @@ import Quickshell.Services.Mpris
 import Quickshell.Widgets
 
 Column {
+  spacing: 18
+
   anchors {
     fill: parent
-    margins: 25
+    margins: 20
   }
 
   Row {
@@ -16,8 +18,8 @@ Column {
     spacing: 25
 
     ClippingRectangle {
-      width: 120
-      height: 120
+      width: 70
+      height: 70
       radius: 8
       color: "transparent"
 
@@ -52,293 +54,259 @@ Column {
         spacing: 4
 
         Text {
-          text: "Artist"
-          font.pixelSize: 13
-          font.weight: 350
-          font.family: "Inter"
-          font.letterSpacing: 0.5
-          opacity: musicRect.expanded ? 1 : 0
-          color: Colors.primary
-        }
-
-        Text {
-          text: Music.trackArtist
-          font.pixelSize: 15
-          font.weight: 500
-          font.family: "Inter"
-          font.letterSpacing: 0.5
-          opacity: musicRect.expanded ? 1 : 0
-          color: Colors.primary
-        }
-      }
-
-      Column {
-        spacing: 3
-
-        Text {
-          text: "Track"
-          font.pixelSize: 13
-          font.weight: 350
-          font.family: "Inter"
-          font.letterSpacing: 0.5
-          opacity: musicRect.expanded ? 1 : 0
-          color: Colors.primary
-        }
-
-        Text {
           text: Music.trackTitle
           font.pixelSize: 15
           font.weight: 500
           font.family: "Inter"
           font.letterSpacing: 0.5
           opacity: musicRect.expanded ? 1 : 0
-          color: Colors.primary
+          color: Colors.secondary
+        }
+
+        Text {
+          text: Music.trackArtist
+          font.pixelSize: 14
+          font.weight: 400
+          font.family: "Inter"
+          font.letterSpacing: 0.5
+          opacity: musicRect.expanded ? 1 : 0
+          color: Colors.secondary
         }
       }
     }
   }
 
-  ColumnLayout {
+  Column {
     opacity: musicRect.expanded ? 1 : 0
-
-    Behavior on opacity {
-      NumberAnimation {
-        duration: 300
-        easing.type: Easing.Linear
-      }
-    }
+    spacing: 10
 
     anchors {
       fill: parent
-      topMargin: 135
+      topMargin: 10
     }
 
-    Item {
-      Layout.fillWidth: true
-      implicitHeight: 12
+    Rectangle {
+      id: rect1
 
-      Rectangle {
-        id: rect1
+      anchors.fill: parent
+      color: "transparent"
+
+      Slider {
+        id: pBar
 
         anchors.fill: parent
-        color: "transparent"
+        from: 0
+        to: Music.length > 0 ? Music.length : 1
 
-        Slider {
-          id: pBar
+        background: Rectangle {
+          x: pBar.leftPadding
+          y: pBar.topPadding + pBar.availableHeight / 2 - height / 2
+          width: pBar.availableWidth
+          height: 10
+          radius: height / 2
+          color: Colors.surface_variant
 
-          anchors.fill: parent
-          from: 0
-          to: Music.length > 0 ? Music.length : 1
-
-          background: Rectangle {
-            x: pBar.leftPadding
-            y: pBar.topPadding + pBar.availableHeight / 2 - height / 2
-            width: pBar.availableWidth
-            height: 10
+          Rectangle {
+            width: pBar.visualPosition * parent.width
+            height: parent.height
             radius: height / 2
-            color: Colors.surface_variant
-
-            Rectangle {
-              width: pBar.visualPosition * parent.width
-              height: parent.height
-              radius: height / 2
-              color: Colors.secondary
-            }
+            color: Colors.secondary
           }
-          handle: Item {
-            x: pBar.leftPadding + pBar.visualPosition * (pBar.availableWidth - width)
-            y: pBar.topPadding + pBar.availableHeight / 2 - height / 2
-            width: 17
-            height: 17
+        }
+        handle: Item {
+          x: pBar.leftPadding + pBar.visualPosition * (pBar.availableWidth - width)
+          y: pBar.topPadding + pBar.availableHeight / 2 - height / 2
+          width: 17
+          height: 17
 
-            RectangularShadow {
-              anchors.fill: parent
-              radius: width / 2
-              blur: 2
-              spread: 1
-              color: Colors.on_secondary
-            }
-
-            Rectangle {
-              anchors.fill: parent
-              radius: width / 2
-              color: Colors.background
-            }
+          RectangularShadow {
+            anchors.fill: parent
+            radius: width / 2
+            blur: 2
+            spread: 1
+            color: Colors.on_secondary
           }
 
-          onPressedChanged: {
-            if (!pressed) {
-              Music.seekTo(value);
-            }
+          Rectangle {
+            anchors.fill: parent
+            radius: width / 2
+            color: Colors.background
           }
+        }
 
-          Binding {
-            target: pBar
-            property: "value"
-            value: Music.position
-            when: !pBar.pressed
+        onPressedChanged: {
+          if (!pressed) {
+            Music.seekTo(value);
           }
+        }
+
+        Binding {
+          target: pBar
+          property: "value"
+          value: Music.position
+          when: !pBar.pressed
         }
       }
     }
 
-    RowLayout {
-      Layout.fillWidth: true
+    Column {
+      anchors.fill: parent
+
+      RowLayout {
+        Layout.fillWidth: parent
+
+        Text {
+          text: Music.formatTime(pBar.pressed ? pBar.value : Music.position)
+          font.pixelSize: 13
+          color: "white"
+          font.weight: 400
+          font.family: "Inter"
+          font.letterSpacing: 1
+        }
+
+        Item {}
+
+        Text {
+          text: Music.formatTime(Music.length)
+          font.pixelSize: 13
+          font.weight: 400
+          font.family: "Inter"
+          font.letterSpacing: 1
+          color: "white"
+        }
+      }
+    }
+  }
+
+  RowLayout {
+    Layout.alignment: Qt.AlignBottom
+    Layout.fillWidth: parent.width
+    Layout.fillHeight: parent.height
+    spacing: 20
+
+    Rectangle {
+      Layout.preferredWidth: 20
+      Layout.preferredHeight: 20
       Layout.alignment: Qt.AlignHCenter
+      radius: 8
+      color: Music.activePlayer && Music.activePlayer.loopState !== MprisLoopState.None ? Colors.secondary_container : "transparent"
 
-      Text {
-        text: Music.formatTime(pBar.pressed ? pBar.value : Music.position)
-        font.pixelSize: 13
-        color: "white"
-        font.weight: 400
-        font.family: "Inter"
-        font.letterSpacing: 1
-        Layout.alignment: Qt.AlignLeft
+      Image {
+        source: "assets/repeat.svg"
+        width: 20
+        height: 20
+        anchors.fill: parent
       }
 
-      Item {
-        Layout.fillWidth: true
-      }
+      MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
 
-      Text {
-        text: Music.formatTime(Music.length)
-        font.pixelSize: 13
-        font.weight: 400
-        font.family: "Inter"
-        font.letterSpacing: 1
-        color: "white"
-        Layout.alignment: Qt.AlignRight
+        onClicked: Music.cycleLoop()
       }
     }
 
-    RowLayout {
-      Layout.alignment: Qt.AlignHCenter
-      spacing: 20
+    Rectangle {
+      Layout.preferredWidth: 24
+      Layout.preferredHeight: 24
+      Layout.alignment: Qt.AlignVCenter
+      radius: 8
+      color: "transparent"
 
-      Rectangle {
-        Layout.preferredWidth: 20
-        Layout.preferredHeight: 20
-        Layout.alignment: Qt.AlignHCenter
-        radius: 8
-        color: Music.activePlayer && Music.activePlayer.loopState !== MprisLoopState.None ? Colors.secondary_container : "transparent"
+      Image {
+        source: "assets/skip_previous.svg"
+        width: 24
+        height: 24
+        anchors.fill: parent
+      }
 
-        Image {
-          source: "assets/repeat.svg"
-          width: 20
-          height: 20
-          anchors.fill: parent
+      MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+
+        onClicked: {
+          if (Music.activePlayer && Music.activePlayer.canGoPrevious)
+            Music.activePlayer.previous();
         }
+      }
+    }
 
-        MouseArea {
-          anchors.fill: parent
-          cursorShape: Qt.PointingHandCursor
+    Rectangle {
+      id: playBtn
 
-          onClicked: Music.cycleLoop()
+      Layout.preferredWidth: 42
+      Layout.preferredHeight: 42
+      Layout.alignment: Qt.AlignCenter
+      radius: 11
+      color: Colors.secondary_container
+
+      Image {
+        source: Music.activePlayer && Music.activePlayer.isPlaying ? "assets/pause.svg" : "assets/play.svg"
+        width: 24
+        height: 24
+
+        anchors {
+          centerIn: parent
         }
       }
 
-      Rectangle {
-        Layout.preferredWidth: 24
-        Layout.preferredHeight: 24
-        Layout.alignment: Qt.AlignVCenter
-        radius: 8
-        color: "transparent"
+      MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
 
-        Image {
-          source: "assets/skip_previous.svg"
-          width: 24
-          height: 24
-          anchors.fill: parent
-        }
-
-        MouseArea {
-          anchors.fill: parent
-          cursorShape: Qt.PointingHandCursor
-
-          onClicked: {
-            if (Music.activePlayer && Music.activePlayer.canGoPrevious)
-              Music.activePlayer.previous();
-          }
+        onClicked: {
+          if (Music.activePlayer && Music.activePlayer.canTogglePlaying)
+            Music.activePlayer.togglePlaying();
         }
       }
+    }
 
-      Rectangle {
-        id: playBtn
+    Rectangle {
+      Layout.preferredWidth: 24
+      Layout.preferredHeight: 24
+      Layout.alignment: Qt.AlignVCenter
+      radius: 8
+      color: "transparent"
 
-        Layout.preferredWidth: 42
-        Layout.preferredHeight: 42
-        Layout.alignment: Qt.AlignCenter
-        radius: 11
-        color: Colors.secondary_container
-
-        Image {
-          source: Music.activePlayer && Music.activePlayer.isPlaying ? "assets/pause.svg" : "assets/play.svg"
-          width: 24
-          height: 24
-
-          anchors {
-            centerIn: parent
-          }
-        }
-
-        MouseArea {
-          anchors.fill: parent
-          cursorShape: Qt.PointingHandCursor
-
-          onClicked: {
-            if (Music.activePlayer && Music.activePlayer.canTogglePlaying)
-              Music.activePlayer.togglePlaying();
-          }
-        }
+      Image {
+        source: "assets/skip_next.svg"
+        width: 24
+        height: 24
+        anchors.fill: parent
       }
 
-      Rectangle {
-        Layout.preferredWidth: 24
-        Layout.preferredHeight: 24
-        Layout.alignment: Qt.AlignVCenter
-        radius: 8
-        color: "transparent"
+      MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
 
-        Image {
-          source: "assets/skip_next.svg"
-          width: 24
-          height: 24
-          anchors.fill: parent
-        }
-
-        MouseArea {
-          anchors.fill: parent
-          cursorShape: Qt.PointingHandCursor
-
-          onClicked: {
-            if (Music.activePlayer && Music.activePlayer.canGoNext)
-              Music.activePlayer.next();
-          }
+        onClicked: {
+          if (Music.activePlayer && Music.activePlayer.canGoNext)
+            Music.activePlayer.next();
         }
       }
+    }
 
-      Rectangle {
-        Layout.preferredWidth: 20
-        Layout.preferredHeight: 20
-        Layout.alignment: Qt.AlignVCenter
-        radius: 8
-        color: Music.activePlayer && Music.activePlayer.shuffle ? Colors.secondary_container : "transparent"
+    Rectangle {
+      Layout.preferredWidth: 20
+      Layout.preferredHeight: 20
+      Layout.alignment: Qt.AlignVCenter
+      radius: 8
+      color: Music.activePlayer && Music.activePlayer.shuffle ? Colors.secondary_container : "transparent"
 
-        Image {
-          source: "assets/shuffle.svg"
-          width: 20
-          height: 20
-          anchors.fill: parent
-        }
+      Image {
+        source: "assets/shuffle.svg"
+        width: 20
+        height: 20
+        anchors.fill: parent
+      }
 
-        MouseArea {
-          anchors.fill: parent
-          cursorShape: Qt.PointingHandCursor
+      MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
 
-          onClicked: {
-            if (Music.activePlayer && Music.activePlayer.shuffleSupported)
-              Music.activePlayer.shuffle = !Music.activePlayer.shuffle;
-          }
+        onClicked: {
+          if (Music.activePlayer && Music.activePlayer.shuffleSupported)
+            Music.activePlayer.shuffle = !Music.activePlayer.shuffle;
         }
       }
     }
