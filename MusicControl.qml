@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
 import QtQuick.Layouts
+import Quickshell.Services.Mpris
 import Quickshell.Widgets
 
 Column {
@@ -48,40 +49,48 @@ Column {
       }
 
       Column {
+        spacing: 4
+
         Text {
           text: "Artist"
-          font.pixelSize: 14
+          font.pixelSize: 13
           font.weight: 350
-          font.family: "JetBrains Mono"
+          font.family: "Inter"
+          font.letterSpacing: 0.5
           opacity: musicRect.expanded ? 1 : 0
           color: Colors.primary
         }
 
         Text {
           text: Music.trackArtist
-          font.pixelSize: 16
-          font.weight: 600
-          font.family: "JetBrains Mono"
+          font.pixelSize: 15
+          font.weight: 500
+          font.family: "Inter"
+          font.letterSpacing: 0.5
           opacity: musicRect.expanded ? 1 : 0
           color: Colors.primary
         }
       }
 
       Column {
+        spacing: 3
+
         Text {
           text: "Track"
-          font.pixelSize: 14
+          font.pixelSize: 13
           font.weight: 350
-          font.family: "JetBrains Mono"
+          font.family: "Inter"
+          font.letterSpacing: 0.5
           opacity: musicRect.expanded ? 1 : 0
           color: Colors.primary
         }
 
         Text {
           text: Music.trackTitle
-          font.pixelSize: 16
-          font.weight: 600
-          font.family: "JetBrains Mono"
+          font.pixelSize: 15
+          font.weight: 500
+          font.family: "Inter"
+          font.letterSpacing: 0.5
           opacity: musicRect.expanded ? 1 : 0
           color: Colors.primary
         }
@@ -91,7 +100,6 @@ Column {
 
   ColumnLayout {
     opacity: musicRect.expanded ? 1 : 0
-    spacing: 10
 
     Behavior on opacity {
       NumberAnimation {
@@ -163,6 +171,9 @@ Column {
               Music.seekTo(value);
             }
           }
+          onMoved: {
+            Music.position = value;
+          }
 
           Binding {
             target: pBar
@@ -175,17 +186,16 @@ Column {
     }
 
     RowLayout {
-      anchors {
-        fill: parent
-        topMargin: 8
-      }
+      Layout.fillWidth: true
+      Layout.alignment: Qt.AlignHCenter
 
       Text {
         text: Music.formatTime(pBar.pressed ? pBar.value : Music.position)
         font.pixelSize: 13
         color: "white"
         font.weight: 400
-        font.family: "JetBrains Mono"
+        font.family: "Inter"
+        font.letterSpacing: 1
         Layout.alignment: Qt.AlignLeft
       }
 
@@ -197,9 +207,142 @@ Column {
         text: Music.formatTime(Music.length)
         font.pixelSize: 13
         font.weight: 400
-        font.family: "JetBrains Mono"
+        font.family: "Inter"
+        font.letterSpacing: 1
         color: "white"
         Layout.alignment: Qt.AlignRight
+      }
+    }
+
+    RowLayout {
+      Layout.alignment: Qt.AlignHCenter
+      spacing: 20
+
+      Rectangle {
+        Layout.preferredWidth: 20
+        Layout.preferredHeight: 20
+        Layout.alignment: Qt.AlignHCenter
+        radius: 8
+        color: Music.activePlayer && Music.activePlayer.loopState !== MprisLoopState.None ? Colors.secondary_container : "transparent"
+
+        Image {
+          source: "assets/repeat.svg"
+          width: 20
+          height: 20
+          anchors.fill: parent
+        }
+
+        MouseArea {
+          anchors.fill: parent
+          cursorShape: Qt.PointingHandCursor
+
+          onClicked: Music.cycleLoop()
+        }
+      }
+
+      Rectangle {
+        Layout.preferredWidth: 24
+        Layout.preferredHeight: 24
+        Layout.alignment: Qt.AlignVCenter
+        radius: 8
+        color: "transparent"
+
+        Image {
+          source: "assets/skip_previous.svg"
+          width: 24
+          height: 24
+          anchors.fill: parent
+        }
+
+        MouseArea {
+          anchors.fill: parent
+          cursorShape: Qt.PointingHandCursor
+
+          onClicked: {
+            if (Music.activePlayer && Music.activePlayer.canGoPrevious)
+              Music.activePlayer.previous();
+          }
+        }
+      }
+
+      Rectangle {
+        id: playBtn
+
+        Layout.preferredWidth: 42
+        Layout.preferredHeight: 42
+        Layout.alignment: Qt.AlignCenter
+        radius: 11
+        color: Colors.secondary_container
+
+        Image {
+          source: Music.activePlayer && Music.activePlayer.isPlaying ? "assets/pause.svg" : "assets/play.svg"
+          width: 24
+          height: 24
+
+          anchors {
+            centerIn: parent
+          }
+        }
+
+        MouseArea {
+          anchors.fill: parent
+          cursorShape: Qt.PointingHandCursor
+
+          onClicked: {
+            if (Music.activePlayer && Music.activePlayer.canTogglePlaying)
+              Music.activePlayer.togglePlaying();
+          }
+        }
+      }
+
+      Rectangle {
+        Layout.preferredWidth: 24
+        Layout.preferredHeight: 24
+        Layout.alignment: Qt.AlignVCenter
+        radius: 8
+        color: "transparent"
+
+        Image {
+          source: "assets/skip_next.svg"
+          width: 24
+          height: 24
+          anchors.fill: parent
+        }
+
+        MouseArea {
+          anchors.fill: parent
+          cursorShape: Qt.PointingHandCursor
+
+          onClicked: {
+            if (Music.activePlayer && Music.activePlayer.canGoNext)
+              Music.activePlayer.next();
+          }
+        }
+      }
+
+      Rectangle {
+        Layout.preferredWidth: 20
+        Layout.preferredHeight: 20
+        Layout.alignment: Qt.AlignVCenter
+        radius: 8
+        color: Music.activePlayer && Music.activePlayer.shuffle ? Colors.secondary_container : "transparent"
+
+        Image {
+          source: "assets/shuffle.svg"
+          width: 20
+          height: 20
+          anchors.fill: parent
+        }
+
+        MouseArea {
+          anchors.fill: parent
+          cursorShape: Qt.PointingHandCursor
+
+          onClicked: {
+            if (Music.activePlayer && Music.activePlayer.shuffleSupported)
+              Music.activePlayer.shuffle = !Music.activePlayer.shuffle;
+          }
+        }
       }
     }
   }

@@ -31,10 +31,10 @@ ShellRoot {
       radius: Math.min(height / 2, 8)
       clip: true
       opacity: Music.activePlayer !== null && Music.activePlayer.isPlaying ? 1 : 0
-      implicitWidth: expanded ? musicRow.implicitWidth + 280 : musicRow.implicitWidth + 30
-      implicitHeight: expanded ? 170 : 30
-      width: expanded ? musicRow.implicitWidth + 280 : musicRow.implicitWidth + 30
-      height: expanded ? 240 : 30
+      implicitWidth: expanded ? musicRow.implicitWidth + 250 : musicRow.implicitWidth + 30
+      implicitHeight: expanded ? 270 : 30
+      width: expanded ? musicRow.implicitWidth + 250 : musicRow.implicitWidth + 30
+      height: expanded ? 270 : 30
       state: Music.activePlayer !== null && Music.activePlayer.isPlaying ? "shown" : "hidden"
 
       Behavior on opacity {
@@ -63,7 +63,7 @@ ShellRoot {
 
           PropertyChanges {
             target: musicRect
-            width: musicRect.expanded ? musicRow.width + 305 : musicRow.width + 30
+            width: musicRect.expanded ? musicRow.width + 300 : musicRow.width + 30
             opacity: 1
             visible: true
           }

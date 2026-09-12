@@ -44,10 +44,21 @@ Singleton {
 
     const target = Math.max(0, Math.min(seconds, player.length));
 
-    if (player.positionSupported)
-      player.position = target;
+    player.seek(target - player.position);
+  }
+
+  function cycleLoop() {
+    if (!activePlayer || !activePlayer.loopSupported)
+      return;
+
+    const p = activePlayer;
+
+    if (p.loopState === MprisLoopState.None)
+      p.loopState = MprisLoopState.Playlist;
+    else if (p.loopState === MprisLoopState.Playlist)
+      p.loopState = MprisLoopState.Track;
     else
-      player.seek(target - player.position);
+      p.loopState = MprisLoopState.None;
   }
 
   FrameAnimation {
