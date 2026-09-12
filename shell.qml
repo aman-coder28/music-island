@@ -28,7 +28,7 @@ ShellRoot {
       property bool expanded: hover.hovered
 
       color: Colors.on_secondary
-      radius: Math.min(height / 2, 10)
+      radius: expanded ? Math.min(height / 2, 16) : Math.min(height / 2, 9)
       clip: true
       opacity: Music.activePlayer !== null && Music.activePlayer.isPlaying ? 1 : 0
       implicitWidth: expanded ? musicRow.implicitWidth + 240 : musicRow.implicitWidth + 30
@@ -121,7 +121,7 @@ ShellRoot {
       anchors {
         top: parent.top
         horizontalCenter: parent.horizontalCenter
-        topMargin: expanded ? 4 : 1
+        topMargin: expanded ? 6 : 2
       }
 
       Row {

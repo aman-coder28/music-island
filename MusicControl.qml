@@ -81,7 +81,7 @@ ColumnLayout {
     anchors {
       fill: parent
       margins: 4
-      topMargin: 35
+      topMargin: 40
     }
 
     Text {
@@ -216,8 +216,8 @@ ColumnLayout {
     Rectangle {
       id: playBtn
 
-      Layout.preferredWidth: 42
-      Layout.preferredHeight: 42
+      Layout.preferredWidth: 36
+      Layout.preferredHeight: 36
       Layout.alignment: Qt.AlignVCenter
       radius: 11
       color: Colors.secondary_container
@@ -269,8 +269,8 @@ ColumnLayout {
     }
 
     Rectangle {
-      Layout.preferredWidth: 20
-      Layout.preferredHeight: 20
+      Layout.preferredWidth: 28
+      Layout.preferredHeight: 28
       Layout.alignment: Qt.AlignVCenter
       radius: 8
       color: Music.activePlayer && Music.activePlayer.shuffle ? Colors.secondary_container : "transparent"
@@ -279,7 +279,10 @@ ColumnLayout {
         source: "assets/shuffle.svg"
         width: 20
         height: 20
-        anchors.fill: parent
+
+        anchors {
+          centerIn: parent
+        }
       }
 
       MouseArea {
