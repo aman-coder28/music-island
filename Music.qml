@@ -7,7 +7,7 @@ Singleton {
   property bool playing: MprisPlaybackState.Playing
   property bool paused: MprisPlaybackState.Paused
   property bool stopped: MprisPlaybackState.Stopped
-  readonly property var activePlayer: {
+  property var activePlayer: {
     return Mpris.players.values.length > 0 ? Mpris.players.values[0] : null;
   }
   property string trackTitle: Music.activePlayer.trackTitle ?? ""

@@ -27,14 +27,14 @@ ShellRoot {
 
       property bool expanded: hover.hovered
 
-      color: Colors.secondayColor
+      color: Colors.on_secondary
       radius: Math.min(height / 2, 8)
       clip: true
       opacity: Music.activePlayer !== null && Music.activePlayer.isPlaying ? 1 : 0
       implicitWidth: expanded ? musicRow.implicitWidth + 280 : musicRow.implicitWidth + 30
-      implicitHeight: expanded ? 170 : 33
+      implicitHeight: expanded ? 170 : 30
       width: expanded ? musicRow.implicitWidth + 280 : musicRow.implicitWidth + 30
-      height: expanded ? 240 : 33
+      height: expanded ? 240 : 30
       state: Music.activePlayer !== null && Music.activePlayer.isPlaying ? "shown" : "hidden"
 
       Behavior on opacity {
@@ -121,7 +121,7 @@ ShellRoot {
       anchors {
         top: parent.top
         horizontalCenter: parent.horizontalCenter
-        topMargin: 4
+        topMargin: expanded ? 4 : 1
       }
 
       Row {
@@ -158,7 +158,7 @@ ShellRoot {
           font.weight: 600
           font.family: "Inter"
           opacity: musicRect.expanded ? 0 : 1
-          color: Colors.accentColor
+          color: Colors.on_surface
 
           Behavior on opacity {
             NumberAnimation {

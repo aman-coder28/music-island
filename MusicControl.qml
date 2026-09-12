@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Effects
 import QtQuick.Layouts
+import Quickshell.Widgets
 
 Column {
   function formatTime(totalSeconds) {
@@ -20,9 +22,10 @@ Column {
     opacity: musicRect.expanded ? 1 : 0
     spacing: 25
 
-    Rectangle {
+    ClippingRectangle {
       width: 120
       height: 120
+      radius: 8
       color: "transparent"
 
       Image {
@@ -59,16 +62,16 @@ Column {
           font.weight: 350
           font.family: "JetBrains Mono"
           opacity: musicRect.expanded ? 1 : 0
-          color: Colors.primaryColor
+          color: Colors.primary
         }
 
         Text {
-          text: Music.trackTitle
+          text: Music.trackArtist
           font.pixelSize: 16
           font.weight: 600
           font.family: "JetBrains Mono"
           opacity: musicRect.expanded ? 1 : 0
-          color: Colors.primaryColor
+          color: Colors.primary
         }
       }
 
@@ -79,16 +82,16 @@ Column {
           font.weight: 350
           font.family: "JetBrains Mono"
           opacity: musicRect.expanded ? 1 : 0
-          color: Colors.primaryColor
+          color: Colors.primary
         }
 
         Text {
-          text: Music.trackArtist
+          text: Music.trackTitle
           font.pixelSize: 16
           font.weight: 600
           font.family: "JetBrains Mono"
           opacity: musicRect.expanded ? 1 : 0
-          color: Colors.primaryColor
+          color: Colors.primary
         }
       }
     }
@@ -120,7 +123,7 @@ Column {
 
     Item {
       Layout.fillWidth: true
-      implicitHeight: 10
+      implicitHeight: 12
 
       Rectangle {
         id: rect1
@@ -128,34 +131,65 @@ Column {
         anchors.fill: parent
         color: "transparent"
 
-        ProgressBar {
+        Slider {
           id: pBar
 
-          to: 1
-          value: Music.length > 0 ? Music.position / Music.length : 0
+          anchors.fill: parent
           from: 0
+          to: Music.length > 0 ? Music.length : 1
+          value: Music.length > 0 ? Music.position / Music.length : 1
 
-          Behavior on value {
-            NumberAnimation {
-              duration: 200
-              easing.type: Easing.InBounce
+          background: Rectangle {
+            x: pBar.leftPadding
+            y: pBar.topPadding + pBar.availableHeight / 2 - height / 2
+            width: pBar.availableWidth
+            height: 10
+            radius: height / 2
+            color: Colors.surface_variant
+
+            Rectangle {
+              width: pBar.visualPosition * parent.width
+              height: parent.height
+              radius: height / 2
+              color: Colors.secondary
             }
           }
-          background: Rectangle {
-            implicitHeight: 10
-            color: Colors.bgColor
-            radius: 5
-          }
-          contentItem: Rectangle {
-            implicitWidth: 200
-            width: pBar.visualPosition * pBar.width
-            implicitHeight: 10
-            color: Colors.secondaryColor
-            radius: 5
+          handle: Item {
+            x: pBar.leftPadding + pBar.visualPosition * (pBar.availableWidth - width)
+            y: pBar.topPadding + pBar.availableHeight / 2 - height / 2
+            width: 17
+            height: 17
+
+            RectangularShadow {
+              anchors.fill: parent
+              radius: width / 2
+              blur: 2
+              spread: 1
+              color: Colors.on_secondary
+            }
+
+            Rectangle {
+              anchors.fill: parent
+              radius: width / 2
+              color: Colors.background
+            }
           }
 
-          anchors {
-            fill: parent
+          onPressedChanged: {
+            if (!pressed && Music.activePlayer && Music.activePlayer.canSeek) {
+              Music.activePlayer.position = pBar.value;
+            }
+
+            if (pressed && Music.activePlayer && Music.activePlayer.canSeek) {
+              Music.activePlayer.seek(value * Music.length);
+            }
+          }
+
+          Binding {
+            target: pBar
+            property: "value"
+            value: Music.position
+            when: !pBar.pressed
           }
         }
       }
