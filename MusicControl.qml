@@ -10,15 +10,17 @@ ColumnLayout {
 
   property bool expanded: parent.expanded
 
+  width: 400
   spacing: 10
 
   anchors {
     fill: parent
-    margins: 15
+    margins: 14
   }
 
   Row {
     Layout.alignment: Qt.AlignLeft
+    Layout.fillWidth: parent
     spacing: 20
     opacity: controls.expanded ? 1 : 0
 
@@ -31,8 +33,8 @@ ColumnLayout {
     }
 
     ClippingRectangle {
-      width: 70
-      height: 70
+      width: 60
+      height: 60
       radius: 8
       color: "transparent"
 
@@ -53,10 +55,11 @@ ColumnLayout {
       topPadding: 7
 
       Column {
-        spacing: 5
+        Layout.alignment: Qt.AlignCenter
+        spacing: 7
 
         Text {
-          text: Music.trackTitle
+          text: Music.shortenStrings(Music.trackTitle)
           font.pixelSize: 15
           font.weight: 500
           font.family: "Inter"
@@ -81,7 +84,7 @@ ColumnLayout {
     anchors {
       fill: parent
       margins: 4
-      topMargin: 40
+      topMargin: 30
     }
 
     Text {

@@ -33,6 +33,14 @@ Singleton {
     return mins + ":" + (secs < 10 ? "0" + secs : secs);
   }
 
+  function shortenStrings(text: string) {
+    if (text.length >= 31) {
+      return text.substring(0, 31) + "...";
+    }
+
+    return text;
+  }
+
   function seekTo(seconds) {
     if (!activePlayer)
       return;

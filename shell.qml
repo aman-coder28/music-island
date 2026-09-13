@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
@@ -28,13 +29,13 @@ ShellRoot {
       property bool expanded: hover.hovered
 
       color: Colors.on_secondary
-      radius: expanded ? Math.min(height / 2, 16) : Math.min(height / 2, 9)
+      radius: expanded ? Math.min(height / 2, 16) : Math.min(height / 2, 8)
       clip: true
       opacity: Music.activePlayer !== null && Music.activePlayer.isPlaying ? 1 : 0
-      implicitWidth: expanded ? musicRow.implicitWidth + 240 : musicRow.implicitWidth + 30
-      implicitHeight: expanded ? musicRow.implicitHeight + 155 : 30
-      width: expanded ? musicRow.implicitWidth + 240 : musicRow.implicitWidth + 30
-      height: expanded ? musicRow.implicitHeight + 155 : 30
+      implicitWidth: expanded ? 400 : musicRow.implicitWidth + 28
+      implicitHeight: expanded ? musicRow.implicitHeight + 145 : 31
+      width: expanded ? 400 : musicRow.implicitWidth + 28
+      height: expanded ? musicRow.implicitHeight + 145 : 31
       state: Music.activePlayer !== null && Music.activePlayer.isPlaying ? "shown" : "hidden"
 
       Behavior on opacity {
@@ -63,7 +64,7 @@ ShellRoot {
 
           PropertyChanges {
             target: musicRect
-            width: musicRect.expanded ? musicRow.width + 250 : musicRow.width + 30
+            width: musicRect.expanded ? 380 : musicRow.width + 28
             opacity: 1
             visible: true
           }
@@ -153,7 +154,7 @@ ShellRoot {
         }
 
         Text {
-          text: Music.activePlayer ? (Music.trackTitle || "Unknown Title") : ""
+          text: Music.shortenStrings(Music.activePlayer ? (Music.trackTitle || "Unknown Title") : "")
           font.pixelSize: 14
           font.weight: 600
           font.family: "Inter"
