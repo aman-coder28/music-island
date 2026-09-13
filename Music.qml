@@ -34,11 +34,13 @@ Singleton {
   }
 
   function shortenStrings(text: string) {
-    if (text.length >= 31) {
-      return text.substring(0, 31) + "...";
+    var cleaned = text.replace(/\s*\((?:Official\s*)?(?:Music\s*)?Video\)/gi, "").replace(/\s*\((?:Audio|Lyrics?)\)/gi, "");
+
+    if (cleaned.length >= 31) {
+      return cleaned.substring(0, 31) + "...";
     }
 
-    return text;
+    return cleaned;
   }
 
   function seekTo(seconds) {
