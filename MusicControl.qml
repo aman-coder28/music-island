@@ -79,17 +79,17 @@ ColumnLayout {
 
   RowLayout {
     Layout.fillWidth: true
-    spacing: 10
+    spacing: 8
 
     anchors {
       fill: parent
-      margins: 4
-      topMargin: 30
+      margins: 2
+      topMargin: 28
     }
 
     Text {
       text: Music.formatTime(pBar.pressed ? pBar.value : Music.position)
-      font.pixelSize: 12
+      font.pixelSize: 13
       color: "white"
       font.weight: 400
       font.family: "Inter"
@@ -159,7 +159,7 @@ ColumnLayout {
 
     Text {
       text: Music.formatTime(Music.length)
-      font.pixelSize: 12
+      font.pixelSize: 13
       font.weight: 400
       font.family: "Inter"
       color: "white"
