@@ -20,7 +20,7 @@ Singleton {
   property string trackTitle: Music.activePlayer.trackTitle ?? ""
   property string albumArt: Music.activePlayer.trackArtUrl ?? ""
   property string trackArtist: Music.activePlayer.trackArtist ?? ""
-  property real position: activePlayer.position
+  property real position: activePlayer.position ?? 0
   property real length: activePlayer.length
 
   function formatTime(seconds) {

@@ -33,8 +33,8 @@ ColumnLayout {
     }
 
     ClippingRectangle {
-      width: 60
-      height: 60
+      width: 57
+      height: 57
       radius: 8
       color: "transparent"
 
@@ -52,15 +52,15 @@ ColumnLayout {
 
     Column {
       spacing: 10
-      topPadding: 7
+      topPadding: 4
 
       Column {
         Layout.alignment: Qt.AlignCenter
-        spacing: 7
+        spacing: 6
 
         Text {
           text: Music.shortenStrings(Music.trackTitle)
-          font.pixelSize: 15
+          font.pixelSize: 16
           font.weight: 500
           font.family: "Inter"
           color: Colors.secondary
@@ -68,10 +68,10 @@ ColumnLayout {
 
         Text {
           text: Music.trackArtist
-          font.pixelSize: 14
+          font.pixelSize: 13
           font.weight: 400
           font.family: "Inter"
-          color: Colors.secondary
+          color: Colors.on_surface
         }
       }
     }
@@ -112,13 +112,13 @@ ColumnLayout {
           width: pBar.availableWidth
           height: 7
           radius: height / 2
-          color: Colors.surface_variant
+          color: Colors.outline
 
           Rectangle {
             width: pBar.visualPosition * parent.width
             height: parent.height
             radius: height / 2
-            color: Colors.secondary
+            color: Colors.on_background
           }
         }
         handle: Item {
@@ -130,15 +130,15 @@ ColumnLayout {
           RectangularShadow {
             anchors.fill: parent
             radius: width / 2
-            blur: 2
+            blur: 1
             spread: 1
-            color: Colors.on_secondary
+            color: Colors.on_surface_variant
           }
 
           Rectangle {
             anchors.fill: parent
             radius: width / 2
-            color: Colors.background
+            color: Colors.on_primary
           }
         }
 

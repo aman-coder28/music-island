@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
@@ -24,17 +23,30 @@ ShellRoot {
     }
 
     Rectangle {
+      id: dropShadow
+
+      width: musicRect.width + 2
+      height: musicRect.height + 2
+      radius: musicRect.radius
+      color: Colors.surface_bright
+      opacity: musicRect.state === "shown" ? 0.4 : 0
+      anchors.centerIn: musicRect
+      z: -1
+    }
+
+    Rectangle {
       id: musicRect
 
       property bool expanded: hover.hovered
 
+      z: 1
       color: Colors.on_secondary
       radius: expanded ? Math.min(height / 2, 16) : Math.min(height / 2, 8)
       clip: true
       opacity: Music.activePlayer !== null && Music.activePlayer.isPlaying ? 1 : 0
-      implicitWidth: expanded ? 400 : musicRow.implicitWidth + 28
+      implicitWidth: expanded ? 400 : musicRow.implicitWidth + 24
       implicitHeight: expanded ? musicRow.implicitHeight + 140 : 31
-      width: expanded ? 400 : musicRow.implicitWidth + 28
+      width: expanded ? 400 : musicRow.implicitWidth + 24
       height: expanded ? musicRow.implicitHeight + 140 : 31
       state: Music.activePlayer !== null && Music.activePlayer.isPlaying ? "shown" : "hidden"
 
@@ -64,7 +76,7 @@ ShellRoot {
 
           PropertyChanges {
             target: musicRect
-            width: musicRect.expanded ? 380 : musicRow.width + 28
+            width: musicRect.expanded ? 380 : musicRow.width + 24
             opacity: 1
             visible: true
           }
@@ -136,8 +148,8 @@ ShellRoot {
         }
 
         ClippingRectangle {
-          width: 20
-          height: 20
+          width: 18
+          height: 18
           radius: 180
           opacity: musicRect.expanded ? 0 : 1
 
@@ -154,9 +166,9 @@ ShellRoot {
         }
 
         Text {
-          text: Music.shortenStrings(Music.activePlayer ? (Music.trackTitle || "Unknown Title") : "")
-          font.pixelSize: 14
-          font.weight: 600
+          text: Music.shortenStrings(Music.trackTitle || "Unknown Title")
+          font.pixelSize: 13
+          font.weight: 500
           font.family: "Inter"
           opacity: musicRect.expanded ? 0 : 1
           color: Colors.on_surface
