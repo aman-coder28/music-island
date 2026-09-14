@@ -83,8 +83,9 @@ ColumnLayout {
 
     anchors {
       fill: parent
-      margins: 2
-      topMargin: 28
+      margins: 5
+      topMargin: 32
+      bottomMargin: 10
     }
 
     Text {
