@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
@@ -148,8 +149,8 @@ ShellRoot {
         }
 
         ClippingRectangle {
-          width: 18
-          height: 18
+          width: 19
+          height: 19
           radius: 180
           opacity: musicRect.expanded ? 0 : 1
 
@@ -165,17 +166,119 @@ ShellRoot {
           }
         }
 
-        Text {
-          text: Music.shortenStrings(Music.trackTitle || "Unknown Title")
-          font.pixelSize: 13
-          font.weight: 500
-          font.family: "Inter"
-          opacity: musicRect.expanded ? 0 : 1
-          color: Colors.on_surface
+        Row {
+          id: controls
 
-          Behavior on opacity {
-            NumberAnimation {
-              duration: 150
+          property int cycleState: 0
+          property real slideOffset: 40
+
+          function getItemX(itemIndex) {
+            if (itemIndex === cycleState)
+              return 0; // Active item is centered
+            if (itemIndex === (cycleState + 1) % 3)
+              return slideOffset; // Next item comes from right
+            return -slideOffset; // Previous item goes to the left
+          }
+
+          clip: true
+
+          Timer {
+            id: cycleTimer
+
+            interval: 3000
+            running: true
+            repeat: true
+
+            onTriggered: {
+              controls.cycleState = (controls.cycleState + 1) % 3;
+
+              if (controls.cycleState === 0) {
+                interval = 3000;
+              } else if (controls.cycleState === 1) {
+                interval = 5000;
+              } else {
+                interval = 30000;
+              }
+            }
+          }
+
+          Connections {
+            function onTrackTitleChanged() {
+              controls.cycleState = 0;
+              cycleTimer.interval = 5000;
+              cycleTimer.restart();
+            }
+
+            target: Music
+          }
+
+          MusicBars {
+            visible: controls.cycleState === 2 ? 1 : 0
+            opacity: musicRect.expanded ? 0 : 1
+            maxHeight: 15
+            barWidth: 3
+            barSpacing: 4
+            x: carousel.getItemX(2)
+
+            Behavior on visible {
+              NumberAnimation {
+                duration: 400
+                easing.type: Easing.OutCubic
+              }
+            }
+            Behavior on x {
+              NumberAnimation {
+                duration: 500
+                easing.type: Easing.OutCubic
+              }
+            }
+          }
+
+          Text {
+            text: Music.trackArtist
+            font.pixelSize: 13
+            font.weight: 500
+            font.family: "Inter"
+            opacity: musicRect.expanded ? 0 : 1
+            visible: controls.cycleState === 0 ? 1 : 0
+            x: controls.getItemX(0)
+            color: Colors.on_surface
+
+            Behavior on visible {
+              NumberAnimation {
+                duration: 400
+                easing.type: Easing.OutCubic
+              }
+            }
+            Behavior on x {
+              NumberAnimation {
+                duration: 500
+                easing.type: Easing.OutCubic
+              }
+            }
+          }
+
+          Text {
+            text: Music.shortenStrings(Music.trackTitle || "Unknown Title")
+            font.pixelSize: 13
+            font.weight: 500
+            font.family: "Inter"
+            opacity: musicRect.expanded ? 0 : 1
+            visible: controls.cycleState === 1 ? 1 : 0
+            x: controls.getItemX(1)
+            color: Colors.on_surface
+
+            Behavior on visible {
+              NumberAnimation {
+                duration: 400
+                easing.type: Easing.OutCubic
+              }
+            }
+            Behavior on x {
+              NumberAnimation {
+                duration: 500
+                easing.type: Easing.OutCubic
+              }
             }
           }
         }
