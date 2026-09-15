@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
@@ -197,7 +196,7 @@ ShellRoot {
               } else if (controls.cycleState === 1) {
                 interval = 5000;
               } else {
-                interval = 30000;
+                interval = 60000;
               }
             }
           }
