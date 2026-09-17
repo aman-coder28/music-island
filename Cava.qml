@@ -11,6 +11,7 @@ Singleton {
   property var levels: []
   property bool active: false
   property bool available: false
+  property bool debug: false
   readonly property bool wanted: available && Music.activePlayer !== null && Music.activePlayer.isPlaying
 
   // TOML format required for Cava 0.10+ (Fedora/RakuOS)
@@ -25,6 +26,8 @@ Singleton {
 
     onExited: code => {
       root.available = (code === 0);
+      console.log("Cava available:", root.available);
+
       if (root.available && root.wanted) {
         cavaProc.running = true;
       }
@@ -35,12 +38,15 @@ Singleton {
   Process {
     id: cavaProc
 
-    command: ["sh", "-c", "printf '%s' \"$1\" | cava -p /dev/stdin", "_", root.config]
+    command: ["sh", "-c", "echo \"$1\" > /tmp/qs-cava.conf && cava -p /tmp/qs-cava.conf 2>&1", "_", root.config]
 
     stdout: SplitParser {
       onRead: line => {
         if (!line)
           return;
+
+        if (root.debug)
+          console.log("Cava raw line:", line);
 
         const parts = line.split(";");
         const out = [];
@@ -51,6 +57,11 @@ Singleton {
           out.push(v);
           if (v > peak)
             peak = v;
+        }
+
+        if (root.debug) {
+          console.log("Cava levels:", out);
+          console.log("Peak:", peak);
         }
 
         root.levels = out;
@@ -65,6 +76,7 @@ Singleton {
     }
 
     onExited: code => {
+      console.log("Cava exited with code:", code);
       if (root.wanted)
         relaunch.restart();
     }
