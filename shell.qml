@@ -217,7 +217,7 @@ ShellRoot {
             maxHeight: 15
             barWidth: 3
             barSpacing: 4
-            x: carousel.getItemX(2)
+            x: controls.getItemX(2)
 
             Behavior on visible {
               NumberAnimation {

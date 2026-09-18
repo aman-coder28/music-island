@@ -17,11 +17,11 @@ Singleton {
 
     return players.length > 0 ? players[0] : null;
   }
-  property string trackTitle: Music.activePlayer.trackTitle ?? ""
-  property string albumArt: Music.activePlayer.trackArtUrl ?? ""
-  property string trackArtist: Music.activePlayer.trackArtist ?? ""
-  property real position: activePlayer.position ?? 0
-  property real length: activePlayer.length
+  property string trackTitle: Music.activePlayer?.trackTitle ?? ""
+  property string albumArt: Music.activePlayer?.trackArtUrl ?? ""
+  property string trackArtist: Music.activePlayer?.trackArtist ?? ""
+  property real position: activePlayer?.position ?? 0
+  property real length: activePlayer?.length ?? 0
 
   function formatTime(seconds) {
     if (!isFinite(seconds) || seconds < 0)
@@ -33,7 +33,7 @@ Singleton {
     return mins + ":" + (secs < 10 ? "0" + secs : secs);
   }
 
-  function shortenStrings(text: string) {
+  function shortenStrings(text: string): string {
     var cleaned = text.replace(/\s*\((?:Official\s*)?(?:Music\s*)?Video\)/gi, "").replace(/\s*\((?:Audio|Lyrics?)\)/gi, "");
 
     if (cleaned.length >= 31) {
@@ -75,8 +75,8 @@ Singleton {
   }
 
   FrameAnimation {
-    running: Music.activePlayer.playbackState == MprisPlaybackState.Playing
+    running: Music.activePlayer?.playbackState == MprisPlaybackState.Playing
 
-    onTriggered: Music.activePlayer.positionChanged()
+    onTriggered: Music.activePlayer?.positionChanged()
   }
 }

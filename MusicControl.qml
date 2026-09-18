@@ -79,14 +79,11 @@ ColumnLayout {
 
   RowLayout {
     Layout.fillWidth: true
+    Layout.fillHeight: true
+    Layout.margins: 5
+    Layout.topMargin: 3
+    Layout.bottomMargin: 2
     spacing: 8
-
-    anchors {
-      fill: parent
-      margins: 5
-      topMargin: 32
-      bottomMargin: 10
-    }
 
     Text {
       text: Music.formatTime(pBar.pressed ? pBar.value : Music.position)
