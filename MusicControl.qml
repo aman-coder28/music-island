@@ -80,9 +80,9 @@ ColumnLayout {
   RowLayout {
     Layout.fillWidth: true
     Layout.fillHeight: true
-    Layout.margins: 5
-    Layout.topMargin: 3
-    Layout.bottomMargin: 2
+    Layout.margins: 4
+    Layout.topMargin: 2
+    Layout.bottomMargin: 1
     spacing: 8
 
     Text {
