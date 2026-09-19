@@ -16,7 +16,7 @@ Singleton {
 
   // TOML format required for Cava 0.10+ (Fedora/RakuOS)
   // INI format for older Cava versions (Fedora/RakuOS default)
-  readonly property string config: "[general]\n" + "bars = " + bars + "\n" + "framerate = 30\n" + "autosens = 0\n" + "sensitivity = 100\n" +   // <--- CHANGED FROM 5500 TO 150
+  readonly property string config: "[general]\n" + "bars = " + bars + "\n" + "framerate = 15\n" + "autosens = 0\n" + "sensitivity = 100\n" +   // <--- CHANGED FROM 5500 TO 150
   "\n" + "[input]\n" + "method = pulse\n" + "source = auto\n\n" + "[output]\n" + "method = raw\n" + "raw_target = /dev/stdout\n" + "data_format = ascii\n" + "ascii_max_range = 3000\n" + "bar_delimiter = 59\n" + "frame_delimiter = 10\n" + "channels = mono\n" + "mono_option = average\n\n" + "[smoothing]\n" + "noise_reduction = 77\n"
 
   // 1. Check if cava is installed
@@ -87,7 +87,7 @@ Singleton {
 
     interval: 1500
 
-    onTriggered: if (root.wanted)
+    onTriggered: if (root.wanted || Music.activePlayer.isPlaying)
       cavaProc.running = true
   }
 

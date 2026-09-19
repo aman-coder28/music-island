@@ -41,6 +41,8 @@ ColumnLayout {
       Image {
         id: musicImage
 
+        asynchronous: true
+        cache: true
         source: Music.albumArt ?? ""
         fillMode: Image.PreserveAspectCrop
 
@@ -176,6 +178,8 @@ ColumnLayout {
       color: Music.activePlayer && Music.activePlayer.loopState !== MprisLoopState.None ? Colors.secondary_container : "transparent"
 
       Image {
+        asynchronous: true
+        cache: true
         source: "assets/repeat.svg"
         width: 19
         height: 19
@@ -197,6 +201,8 @@ ColumnLayout {
       color: "transparent"
 
       Image {
+        asynchronous: true
+        cache: true
         source: "assets/skip_previous.svg"
         width: 24
         height: 24
@@ -224,6 +230,8 @@ ColumnLayout {
       color: Colors.secondary_container
 
       Image {
+        asynchronous: true
+        cache: true
         source: Music.activePlayer && Music.activePlayer.isPlaying ? "assets/pause.svg" : "assets/play.svg"
         width: 24
         height: 24
@@ -252,6 +260,8 @@ ColumnLayout {
       color: "transparent"
 
       Image {
+        asynchronous: true
+        cache: true
         source: "assets/skip_next.svg"
         width: 24
         height: 24
@@ -277,6 +287,8 @@ ColumnLayout {
       color: Music.activePlayer && Music.activePlayer.shuffle ? Colors.secondary_container : "transparent"
 
       Image {
+        asynchronous: true
+        cache: true
         source: "assets/shuffle.svg"
         width: 20
         height: 20
