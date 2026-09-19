@@ -12,12 +12,24 @@ Singleton {
   property bool active: false
   property bool available: false
   property bool debug: false
-  readonly property bool wanted: available && Music.activePlayer !== null && Music.activePlayer.isPlaying
+  readonly property bool wanted: available && Music.activePlayer !== null
 
   // TOML format required for Cava 0.10+ (Fedora/RakuOS)
   // INI format for older Cava versions (Fedora/RakuOS default)
   readonly property string config: "[general]\n" + "bars = " + bars + "\n" + "framerate = 15\n" + "autosens = 0\n" + "sensitivity = 100\n" +   // <--- CHANGED FROM 5500 TO 150
   "\n" + "[input]\n" + "method = pulse\n" + "source = auto\n\n" + "[output]\n" + "method = raw\n" + "raw_target = /dev/stdout\n" + "data_format = ascii\n" + "ascii_max_range = 3000\n" + "bar_delimiter = 59\n" + "frame_delimiter = 10\n" + "channels = mono\n" + "mono_option = average\n\n" + "[smoothing]\n" + "noise_reduction = 77\n"
+
+  Connections {
+    function onActivePlayerChanged() {
+      if (root.wanted && !cavaProc.running) {
+        cavaProc.running = true;
+      } else if (!root.wanted && cavaProc.running) {
+        cavaProc.running = false;
+      }
+    }
+
+    target: Music
+  }
 
   // 1. Check if cava is installed
   Process {
@@ -26,7 +38,6 @@ Singleton {
 
     onExited: code => {
       root.available = (code === 0);
-      console.log("Cava available:", root.available);
 
       if (root.available && root.wanted) {
         cavaProc.running = true;
